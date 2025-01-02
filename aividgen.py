@@ -2,7 +2,6 @@ import streamlit as st
 import tempfile
 import os
 import subprocess
-from PIL import Image
 import torch
 import logging
 import gdown
@@ -36,6 +35,9 @@ class ImageAnimator:
         )
     
     def download_checkpoint(self):
+        # إنشاء مجلد checkpoints إذا لم يكن موجودًا
+        os.makedirs("checkpoints", exist_ok=True)
+
         # رابط الملف على Google Drive
         file_url = "https://drive.google.com/uc?id=1sTRCQh2hTi3Z2oINRv3r_6NE7efCPB2e"
         output_path = "checkpoints/vox-cpk.pth.tar"
@@ -46,7 +48,7 @@ class ImageAnimator:
                 gdown.download(file_url, output_path, quiet=False)
     
     def save_temp_file(self, uploaded_file, suffix):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, dir="/tmp", suffix=suffix) as temp_file:
             temp_file.write(uploaded_file.read())
             return temp_file.name
     
@@ -59,7 +61,7 @@ class ImageAnimator:
             with st.spinner("جاري المعالجة..."):
                 image_path = self.save_temp_file(self.uploaded_image, ".jpg")
                 video_path = self.save_temp_file(self.uploaded_video, ".mp4")
-                output_path = os.path.join(tempfile.gettempdir(), "output.mp4")
+                output_path = os.path.join("/tmp", "output.mp4")
                 
                 self.run_model(image_path, video_path, output_path)
                 
@@ -88,14 +90,18 @@ class ImageAnimator:
             "--adapt_scale"
         ]
         
-        process = subprocess.run(
-            command,
-            capture_output=True,
-            text=True
-        )
-        
-        if process.returncode != 0:
-            raise Exception(process.stderr)
+        try:
+            process = subprocess.run(
+                command,
+                capture_output=True,
+                text=True
+            )
+            
+            if process.returncode != 0:
+                raise Exception(process.stderr)
+        except Exception as e:
+            self.logger.error(f"حدث خطأ أثناء تشغيل النموذج: {str(e)}")
+            raise
 
 if __name__ == "__main__":
     animator = ImageAnimator()
