@@ -1,5 +1,34 @@
 import subprocess
 import sys
+import os
+
+# إضافة المسار إلى PATH
+os.environ['PATH'] += os.pathsep + '/home/appuser/.local/bin'
+
+def install_package(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+required_packages = [
+    "matplotlib",
+    "numpy",
+    "torch",
+    "opencv-python",
+    "Pillow",
+    "scikit-learn",
+    "tqdm",
+    "ffmpeg-python",
+    "gdown"
+]
+
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        print(f"جاري تثبيت {package}...")
+        install_package(package)
+
+import subprocess
+import sys
 
 # تثبيت المكتبات المطلوبة
 def install_package(package):
