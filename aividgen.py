@@ -39,13 +39,13 @@ class ImageAnimator:
         os.makedirs("checkpoints", exist_ok=True)
 
         # رابط الملف على Google Drive
-        file_url = "https://drive.google.com/uc?id=1sTRCQh2hTi3Z2oINRv3r_6NE7efCPB2e"
+        file_id = "1sTRCQh2hTi3Z2oINRv3r_6NE7efCPB2e"
         output_path = "checkpoints/vox-cpk.pth.tar"
 
         # تنزيل الملف إذا لم يكن موجودًا
         if not os.path.exists(output_path):
             with st.spinner("جاري تنزيل الملف من Google Drive..."):
-                gdown.download(file_url, output_path, quiet=False)
+                gdown.download(id=file_id, output=output_path, quiet=False)
     
     def save_temp_file(self, uploaded_file, suffix):
         with tempfile.NamedTemporaryFile(delete=False, dir="/tmp", suffix=suffix) as temp_file:
