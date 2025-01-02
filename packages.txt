@@ -1,0 +1,8 @@
+ffmpeg
+libsm6
+libxext6
+python3-dev
+libcairo2
+libcairo2-dev
+libpango1.0-0
+libpangocairo-1.0-0
